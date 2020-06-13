@@ -1,6 +1,9 @@
-import Head from 'next/head'
+import Head from "next/head";
+import { getGithubPreviewProps, parseJson } from "next-tinacms-github";
+import { GetStaticProps } from "next";
 
-export default function Home() {
+export default function Home({ file }) {
+  const data = file.data;
   return (
     <div className="container">
       <Head>
@@ -9,9 +12,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <h1 className="title">{data.title}</h1>
 
         <p className="description">
           Get started by editing <code>pages/index.js</code>
@@ -54,7 +55,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
         </a>
       </footer>
@@ -205,5 +206,29 @@ export default function Home() {
         }
       `}</style>
     </div>
-  )
+  );
 }
+
+export const getStaticProps: GetStaticProps = async function ({
+  preview,
+  previewData,
+}) {
+  if (preview) {
+    return getGithubPreviewProps({
+      ...previewData,
+      fileRelativePath: "content/home.json",
+      parse: parseJson,
+    });
+  }
+  return {
+    props: {
+      sourceProvider: null,
+      error: null,
+      preview: false,
+      file: {
+        fileRelativePath: "content/home.json",
+        data: (await import("../content/home.json")).default,
+      },
+    },
+  };
+};
