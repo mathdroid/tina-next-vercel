@@ -218,6 +218,7 @@ export const getStaticProps: GetStaticProps = async function ({
       ...previewData,
       fileRelativePath: "content/home.json",
       parse: parseJson,
+      head_branch: process.env.BASE_BRANCH,
     });
   }
   return {
